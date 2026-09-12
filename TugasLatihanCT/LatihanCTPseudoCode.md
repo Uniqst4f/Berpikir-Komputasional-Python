@@ -1,6 +1,6 @@
 # SOAL 1
 
-![Mengisi Kotak](./Soal1.png)
+![Mengisi Kotak](./Assets/Soal1.png)
 
 ## Observasi
 1. Jika kita memerhatikan gambar di soal, jumlah bola yang tersedia 12 buah. Sementara itu, jumlah kotak yang tersedia hanya 11. Artiyna jumlah maksimal bola yang kita dapat masukkan hanyalah X <= 11. 
@@ -25,11 +25,11 @@ Keluarkan(Jumlah Bola)
 }
  ```
 
-![Flowchart Soal 1](./FlowChartMenghitungBola.png)
+![Flowchart Soal 1](./Assets/FlowChartMenghitungBola.png)
 
 # SOAL 2
 
-![Soal 2](./Soal2.png)
+![Soal 2](./Assets/Soal2.png)
 
 ## Observasi 
 Bayangkan jalur yang dapat dilalui oleh kanguru sebagai matriks. Dimana setiap dinding di representasikan dengan angka 0 (tidak ada bata), 1 (1 bata), 2 (2 bata), 3 (3 bata), dan # (air) tidak bisa dilalui
@@ -98,11 +98,11 @@ Cari_Lompatan_Minimal (Matriks Peta Kanguru) {
 }
  ```
 
-![Flowchart Soal 2](./mermaid-diagram-1789149284181.png)
+![Flowchart Soal 2](./Assets/mermaid-diagram-1789149284181.png)
 
 # SOAl 3
 
-![Soal 3](./Soal3.png)
+![Soal 3](./Assets/Soal3.png)
 
 ## Observasi
 Dalam soal ini kita hanya perlu mengkategorikan sebuah input atau objek untuk masuk ke sebuah penampungan. Untuk memudahkan pengerjaan soal, saya akan menggunakan array sebagai penampung benda. Dari sana kita hanya perlu membuat fungsi yang memfilter balok kayu dan memasukkannya ke array benar.
@@ -148,11 +148,11 @@ Penyortir_Balok(Balok Kayu) {
 }
 ```
 
-![Flowchart Soal 3](./FlowChartSoal3.png)
+![Flowchart Soal 3](./Assets/FlowChartSoal3.png)
 
 # SOAL 4
 
-![Soal 4](./Soal4.png)
+![Soal 4](./Assets/Soal4.png)
 
 ## Observasi
 
@@ -172,10 +172,10 @@ Untuk semua gambar dari gambar-gambar {
 }
 ```
 
-![Flowchart Soal 4](./FlowChartSoal4.png)
+![Flowchart Soal 4](./Assets/FlowChartSoal4.png)
 
 # Soal 5
-![Soal 5](./Soal5.png)
+![Soal 5](./Assets/Soal5.png)
 
 ## Observasi
 
@@ -194,33 +194,38 @@ Untuk semua gambar dari gambar-gambar {
 ## Pseudocode dan Flowchart
 ```Pseudocode
 
-Ubah_Ke_Menit_dari_Tengah_Malam(waktu):
+Ubah_Ke_Menit_dari_Tengah_Malam(waktu) {
     Keluarkan (jam * 60) + menit
+}
 
-Hitung_Minimal_Jalur(Daftar_Penerbangan):
+Hitung_Minimal_Jalur(Daftar_Penerbangan) {
     
   Daftar_Menit = Array  
 
-  Untuk setiap waktu dalam Daftar_Penerbangan:
+  Untuk setiap waktu dalam Daftar_Penerbangan {
         Daftar_Menit.tambah(Ubah_Ke_Menit_dari_Tengah_Malam(waktu))
-    
+  }
     Urutkan(Daftar_Menit)
     
     Jalur_Pesawat_Terpakai = Array
     
-    Untuk setiap kedatangan dalam Daftar_Menit:
+    Untuk setiap kedatangan dalam Daftar_Menit {
         ditemukan_jalur = False
         
-        Untuk semua Jalur_Pesawat_Terpakai:
-            Jika (kedatangan - Jalur_Pesawat_Terpakai[i] > 15):
+        Untuk semua Jalur_Pesawat_Terpakai{
+            Jika (kedatangan - Jalur_Pesawat_Terpakai[i] > 15) {
                 Jalur_Pesawat_Terpakai[i] = kedatangan
                 ditemukan_jalur = True
                 break
+            }
+        }
         
-        Jika Tidak ditemukan_jalur:
+        Jika Tidak ditemukan_jalur{
             Jalur_Pesawat_Terpakai.tambah(kedatangan)
-            
+        }
+  }
     Kembalikan Panjang(Jalur_Pesawat_Terpakai)
+}
 ```
 
-![Flow Chart Soal 5](./FlowChartSoal5.png)
+![Flow Chart Soal 5](./Assets/FlowChartSoal5.png)
