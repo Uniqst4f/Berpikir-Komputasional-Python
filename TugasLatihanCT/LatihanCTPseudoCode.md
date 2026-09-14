@@ -229,3 +229,254 @@ Hitung_Minimal_Jalur(Daftar_Penerbangan) {
 ```
 
 ![Flow Chart Soal 5](./Assets/FlowChartSoal5.png)
+
+# Soal 6
+
+![Soal Nomor  6](./Assets/Soal6.png)
+
+## Observasi
+
+Untuk menyelesaikan soal ini kita harus mampu merepresentikan  gambar sebagai kode yang dapat dibaca oleh komputer. Saya aku melakukan hal tersebut dengan  membuat  sebuah _adjency list_. _Adjency list_ adalah cara merepresntasikan graf dengan menggunakan array. Index pada array, `adjList[i]`, merepresntasikan karakter apa yang sedang dicatat, bagian kedua, isinya, berisi koneksi yang dimiliki oleh karakter tersebut. Dari itu kita bisa  mendapat _adjency list_  sebagai berikut:
+
+| Node | Indeks Array | Jumlah Tetangga (`degree`) | Daftar Tetangga (`adj[i]`) |
+| :---: | :---: | :---: | :--- |
+| **A** | 0 | 3 | B (1), C (2), D (3) |
+| **B** | 1 | 2 | A (0), E (4) |
+| **C** | 2 | 2 | A (0), F (5) |
+| **D** | 3 | 2 | A (0), G (6) |
+| **E** | 4 | 3 | B (1), H (7), L (11) |
+| **F** | 5 | 4 | C (2), H (7), I (8), J (9) |
+| **G** | 6 | 2 | D (3), K (10) |
+| **H** | 7 | 3 | E (4), F (5), N (13) |
+| **I** | 8 | 2 | F (5), K (10) |
+| **J** | 9 | 3 | F (5), K (10), M (12) |
+| **K** | 10 | 3 | G (6), I (8), J (9) |
+| **L** | 11 | 3 | E (4), N (13), P (15) |
+| **M** | 12 | 3 | J (9), N (13), O (14) |
+| **N** | 13 | 4 | H (7), L (11), M (12), O (14) |
+| **O** | 14 | 3 | M (12), N (13), Q (16) |
+| **P** | 15 | 1 | L (11) |
+| **Q** | 16 | 1 | O (14) |
+
+---
+
+
+Setelah itu, untuk menyelesaikan soal ini, kita perlu menggunakan algoritma BFS. BFS dalam konteks ini  artinya melakuukan simulasi anatara kedua virus  dalam adjency list. Hasil simulasi tersebut adalah sebagai berikut:
+
+| Hari | Target Penyebaran StuxNet | Target Penyebaran RoXX3 | Konflik / Komputer Hancur | Status Komputer Beroperasi & Hancur |
+| :---: | :--- | :--- | :--- | :--- |
+| **0** | `A` *(Inisialisasi)* | `B` *(Inisialisasi)* | Tidak Ada | **StuxNet:** A<br/>**RoXX3:** B |
+| **1** | Dari `A` &rarr; `B, C, D` | Dari `B` &rarr; `A, E` | `A` & `B` saling bertukar virus &rarr; **A dan B HANCUR** | **StuxNet:** C, D<br/>**RoXX3:** E<br/>**Hancur:** A, B |
+| **2** | Dari `C, D` &rarr; `F, G` | Dari `E` &rarr; `H, L` | Tidak Ada | **StuxNet:** C, D, F, G<br/>**RoXX3:** E, H, L<br/>**Hancur:** A, B |
+| **3** | Dari `F, G` &rarr; `H, I, J, K` | Dari `H, L` &rarr; `F, N, P` | `F` dan `H` menerima kedua virus bersamaan &rarr; **F dan H HANCUR** | **StuxNet:** C, D, G, I, J, K<br/>**RoXX3:** E, L, N, P<br/>**Hancur:** A, B, F, H |
+| **4** | Dari `J` &rarr; `M` | Dari `N` &rarr; `M, O` | `M` menerima kedua virus bersamaan &rarr; **M HANCUR** | **StuxNet:** C, D, G, I, J, K<br/>**RoXX3:** E, L, N, O, P<br/>**Hancur:** A, B, F, H, M |
+| **5** | *- Selesai -* | Dari `O` &rarr; `Q` | Tidak Ada | **StuxNet:** C, D, G, I, J, K *(6 node)*<br/>**RoXX3:** E, L, N, O, P, Q *(6 node)*<br/>**Hancur:** A, B, F, H, M *(5 node)* |
+
+---
+
+* **Terinfeksi RoXX3 (Aktif):** 6 Komputer (`E`, `L`, `N`, `O`, `P`, `Q`)
+* **Terinfeksi StuxNet (Aktif):** 6 Komputer (`C`, `D`, `G`, `I`, `J`, `K`)
+* **Hancur (Tidak Aktif):** 5 Komputer (`A`, `B`, `F`, `H`, `M`)
+
+## Pseudocode  dan Flowchart
+Kita implementasi BFS dari soal sebelumnya, tetapi sekarang ada 2 titik awal yang kita perhitungkan.
+
+```Pseudocode
+HitungKomputerRoXX3(adjList, totalNode) {
+    
+    Status = status[totalNode]
+    
+    Untuk i = 0 sampai totalNode - 1 {
+        status[i] = KOSONG
+    }
+
+    Queue_S = Queue BFS StuxNet
+    Queue_R = Queue BFS RoXX3
+
+    status[0] = STUXNET
+    Queue_S.push(0)
+
+    status[1] = ROXX3
+    Queue_R.push(1)
+
+    Selama Queue_S tidak kosong ATAU Queue_R tidak kosong {
+        Calon_S[totalNode] = {False}
+        Calon_R[totalNode] = {False}
+
+        Ulangi sebanyak jumlah elemen dalam Queue_S saat ini {
+            node = Queue_S.pop()
+            Jika status[node] == HANCUR { lanjutkan }
+
+            Untuk setiap tetangga dalam adjList[node] {
+                Jika status[tetangga] == KOSONG {
+                    Calon_S[tetangga] = True
+                }
+            }
+        }
+
+        Ulangi sebanyak jumlah elemen dalam Queue_R saat ini {
+            node = Queue_R.pop()
+            Jika status[node] == HANCUR { lanjutkan }
+
+            Untuk setiap tetangga dalam adjList[node] {
+                Jika status[tetangga] == KOSONG {
+                    Calon_R[tetangga] = True
+                }
+            }
+        }
+
+        Untuk node = 0 sampai totalNode - 1 {
+            Jika status[node] != KOSONG { lanjutkan }
+
+            Jika Calon_S[node] DAN Calon_R[node] {
+                status[node] = HANCUR
+            } 
+            Lain halnya Jika Calon_S[node] {
+                status[node] = STUXNET
+                Queue_S.push(node)
+            } 
+            Lain halnya Jika Calon_R[node] {
+                status[node] = ROXX3
+                Queue_R.push(node)
+            }
+        }
+    }
+
+    jumlah_RoXX3 = 0
+    Untuk i = 0 sampai totalNode - 1 {
+        Jika status[i] == ROXX3 {
+            jumlah_RoXX3++
+        }
+    }
+
+    Kembalikan jumlah_RoXX3
+}
+```
+
+![Flowchart Soal  6](./Assets/FlowChartSoal6.png)
+
+# Soal 7
+
+![Soal No 7](./Assets/Soal7.png)
+
+## Observasi
+Misalkan bahwa gelas putih adalah 1 dan gelas warna sebagai 0. Dengan hal tersebut, kita bisa memikirkan gerbang-gerbang warna tersebut sebagai gerbang logika operasi.
+
+1. Gerbang Toska
+- Karena 1 bersama 1 menghasilkan 1 dan kombinasi selain itu adalah 0, maka gerbang tersebut adalah operasi logika  AND.
+
+2. Gerbang Hijau Muda
+- Karena 0 bersama 0 menghasilkan 0 dan lainnya menghasilkan 1, makar gerbang tersebut adalah operasi logika OR.
+
+3. Gerbang Merah
+- Operasi negasi atau NOT.
+
+Kemudian untuk menyelesaikan soal ini kita harus melakukan simulasi semua kemungkinan menggunakan permutasi. Kita bisa melakukan menggunakan 4 looping. Dengan ini kita bisa menemukan segala kemungkinan yang mengasilkan putih.
+
+## Pseudocode dan Flowchart
+```Pseudocode
+gerbangHijauMuda(x, y) {
+ Kembalikan x || y
+}
+
+gerbangHijauToska(x, y) {
+  Kembalikan x && y
+}
+
+gerbangMerah (x) {
+  Kembalikan !x
+}
+
+Simulasi(A, B, C, D) {
+
+HasilAtas = gerbangHijauMuda(A, B)
+FinalAtas = gerbangMerah(HasilAtas)
+
+NOTc = gerbangMerah(c)
+HasilBawah = gerbangHijauMuda(NOTc, D)
+
+HasilAkhir = gerbangHijauToska(HasilAtas, HasilBawah)
+
+Kembalikan HasilAkhir
+
+}
+
+CariKombinasiPutih() {
+    Untuk A = 0 sampai 1 {
+        Untuk B = 0 sampai 1 {
+            Untuk C = 0 sampai 1 {
+                Untuk D = 0 sampai 1 {
+                    Jika Simulasi(A, B, C, D) == 1 {
+                        Keluarkan "Kombinasi Putih Ditemukan" 
+                        Keluarkan Nilai A, B, C, D
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+![Flowchart Soal 7](./Assets/FlowChartSoal7.png)
+
+# Soal 8
+
+![Soal Nomor 8](./Assets/SoalNo8.png)
+
+## Observasi 
+Kita dapat merepresentikan meja dalam sebuah array dengan  8 annggota. Untuk merepresentikan perputaran kita dapat menggunakan operasi modulu (%). Jadi misalnya kita ingin mengecek orang sebelah kita, kita dapat menggumana `(posisi indeks + 1) % 8`. Ex : Posisi di 7 dan mau melihat sebelah kanannya. Maka (7 + 1) % 8 = 0, jadi cek array[0]. Setelah itu, seperti nomor sebelumnya, kita hanya perlu melakukan simulasi menggunakana permutasi sampai kombinasi yang benar didapatkan. Posisi Buni juga tidak diketahui jadi karena itu perlu simulasi. 
+
+## Pseudocode dan Flowchart
+
+```Pseudocode
+CariPosisi(meja, target) {
+    Untuk i = 0 sampai 7 {
+        Jika meja[i] == target { Kembalikan i }
+    }
+    Kembalikan -1
+}
+
+CekValiditas(meja) {
+    pAni = 0
+    pDani = CariPosisi(meja, 'D')
+    pHani = CariPosisi(meja, 'H')
+    pGani = CariPosisi(meja, 'G')
+    pEni = CariPosisi(meja, 'E')
+    pFani = CariPosisi(meja, 'F')
+    pCici = CariPosisi(meja, 'C')
+
+    Jika pDani != 4 { Kembalikan Salah }
+
+    syarat2 = (pHani == (pGani + 1) % 8 DAN pEni == (pHani + 1) % 8) ATAU 
+              (pHani == (pEni + 1) % 8 DAN pGani == (pHani + 1) % 8)
+    Jika TIDAK syarat2 { Kembalikan Salah }
+
+    Jika pFani == 1 ATAU pFani == 7 ATAU pFani == 3 ATAU pFani == 5 { Kembalikan Salah }
+
+    jarakGkeC = Abs(pGani- pCici)
+    Jika jarakGkeC != 2 DAN jarakGkeC != 6 { Kembalikan Salah }
+
+    Jika pEni != (pDani + 1) % 8 { Kembalikan Salah }
+
+    Kembalikan Benar
+}
+
+CariKombinasi() {
+    sahabat = {'B', 'C', 'D', 'E', 'F', 'G', 'H'}
+    Urutkan(sahabat) 
+    
+    Ulangi {
+        meja[0] = 'A'
+        Untuk i = 0 sampai 6 {
+            meja[i + 1] = sahabat[i]
+        }
+
+        Jika CekValiditas(meja) == Benar {
+            Cetak anggota dalam meja
+            Berhenti
+        }
+    } Selama (Permutasi(sahabat) Bisa)
+}
+```
+
+![Flowchart Soal 8](./Assets/FlowChartSoal8.png)
